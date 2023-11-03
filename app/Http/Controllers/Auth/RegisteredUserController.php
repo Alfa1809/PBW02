@@ -8,10 +8,12 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+
+// use App/
 
 class RegisteredUserController extends Controller
 {
@@ -28,20 +30,19 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-
-    // AHMAD FAZA AL FARISI (6706220050)
     public function store(Request $request): RedirectResponse
     {
+
         $request->validate([
             'username' => ['required', 'string', 'max:100'],
             'fullname' => ['required', 'string', 'max:100'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'address' => ['required', 'string', 'max:1000'],
-            'birthdate' => ['required', 'date'],
+            'birthdate' => ['required', 'date',],
             'phoneNumber' => ['required', 'string', 'max:20'],
             'agama' => ['required', 'string', 'max:20'],
-            'jenisKelamin' => ['required', 'numeric', 'in:0,1'],
+            'jenis_kelamin' => ['required', 'numeric', 'in:0,1'],
         ]);
 
         $user = User::create([
@@ -53,13 +54,13 @@ class RegisteredUserController extends Controller
             'birthdate' => $request->birthdate,
             'phoneNumber' => $request->phoneNumber,
             'agama' => $request->agama,
-            'jenisKelamin' => $request->jenisKelamin,
+            'jenis_kelamin' => $request->jenis_kelamin,
         ]);
 
         event(new Registered($user));
 
-        //Auth::login($user);
+        // Auth::login($user);
 
         return redirect(RouteServiceProvider::HOME);
     }
-}
+} 

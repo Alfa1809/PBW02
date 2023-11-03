@@ -22,9 +22,15 @@ class UsersDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->addColumn('action', 'users.action')
-            ->addColumn('jenisKelamin', function ($user) {
-                switch ($user->jenisKelamin) {
+            ->addColumn('action', function (User $user) {
+                return '<div class="btn-group btn-group-sm flex gap-4" role="group" aria-label="Action Buttons">
+                    <a href="/userEdit/' . $user->id . '" class="btn btn-gray">Edit</a>
+                    <a href="/userView/' . $user->id . '" class="btn btn-gray">View</a>
+                    <a href="/users/' . $user->id . '/delete" class="btn btn-gray">Delete</a>
+                </div>';
+            })
+            ->addColumn('jenis_kelamin', function ($user) {
+                switch ($user->jenis_kelamin) {
                     case 0:
                         return "Pria";
                         break;
@@ -32,13 +38,6 @@ class UsersDataTable extends DataTable
                         return "Wanita";
                         break;
                 }
-            })
-            ->addColumn('action', function (User $user) {
-                return '<div class="btn-group btn-group-sm flex gap-4" role="group" aria-label="Action Buttons">
-                    <a href="/userEdit/' . $user->id . '" class="btn btn-gray">Edit</a>
-                    <a href="/userView/' . $user->id . '" class="btn btn-gray">View</a>
-                    <a href="/users/' . $user->id . '/delete" class="btn btn-gray">Delete</a>
-                </div>';
             })
             ->setRowId('id');
     }
@@ -57,20 +56,20 @@ class UsersDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('users-table')
-                    ->columns($this->getColumns())
-                    ->minifiedAjax()
-                    //->dom('Bfrtip')
-                    ->orderBy(1)
-                    ->selectStyleSingle()
-                    ->buttons([
-                        Button::make('excel'),
-                        Button::make('csv'),
-                        Button::make('pdf'),
-                        Button::make('print'),
-                        Button::make('reset'),
-                        Button::make('reload')
-                    ]);
+            ->setTableId('users-table')
+            ->columns($this->getColumns())
+            ->minifiedAjax()
+            //->dom('Bfrtip')
+            ->orderBy(1)
+            ->selectStyleSingle()
+            ->buttons([
+                Button::make('excel'),
+                Button::make('csv'),
+                Button::make('pdf'),
+                Button::make('print'),
+                Button::make('reset'),
+                Button::make('reload')
+            ]);
     }
 
     /**
@@ -79,21 +78,23 @@ class UsersDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            
-            Column::make('id'),
-            Column::make('fullName')->width(100),
+
+            // Column::make('id'),
+            Column::make('fullname'),
             Column::make('email'),
             Column::make('username'),
             Column::make('address'),
             Column::make('phoneNumber'),
             Column::make('birthdate'),
             Column::make('agama'),
-            Column::make('jenisKelamin'),
+            Column::make('jenis_kelamin'),
             Column::computed('action')
-                  ->exportable(false)
-                  ->printable(false)
-                  ->width(60)
-                  ->addClass('text-center'),
+                ->exportable(false)
+                ->printable(false)
+                ->width(60)
+                ->addClass('text-center'),
+            // Column::make('created_at'),
+            // Column::make('updated_at'),
         ];
     }
 

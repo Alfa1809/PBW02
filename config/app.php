@@ -163,6 +163,7 @@ return [
         /*
          * Application Service Providers...
          */
+        // Barryvdh\Snappy\ServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,

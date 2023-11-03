@@ -1,6 +1,6 @@
 <?php
 
-// 6706220050 - AHMAD FAZA AL FARISI - D3IF 46-04
+// 6706220050 - Ahmad Faza Alfarisi
 
 namespace App\Models;
 
@@ -19,17 +19,17 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-
     protected $fillable = [
         'username',
-        'fullName',
+        'fullname',
         'email',
         'password',
         'address',
         'phoneNumber',
         'birthdate',
         'agama',
-        'jenisKelamin'
+        'jenis_kelamin',
+
     ];
 
     /**

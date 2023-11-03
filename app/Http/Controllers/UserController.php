@@ -1,135 +1,112 @@
 <?php
 
-// 6706220050 - AHMAD FAZA AL FARISI - D3IF 46-04
+//6706220050 - Ahmad Faza Alfarisi
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-
-use App\Providers\RouteServiceProvider;
-
-use Illuminate\Http\RedirectResponse;
-
-
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use App\DataTables\UsersDataTable;
+use Illuminate\Validation\Rules\Password;
 
+use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(UsersDataTable $dataTable)
+    public function index()
     {
-        return $dataTable->render('user.daftarPengguna');
+        return view('user.daftarPengguna');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return view("user.registrasi");
+        return view('user.registrasi');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
-        $request->validate([
-            'username' => ['required', 'string', 'max:100'],
-            'fullName' => ['required', 'string', 'max:100'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'address' => ['required', 'string', 'max:1000'],
-            'birthdate' => ['required', 'date'],
-            'phoneNumber' => ['required', 'string', 'max:20'],
-            'agama' => ['required', 'string', 'max:20'],
-            'jenisKelamin' => ['required', 'numeric', 'in:0,1'],
-        ]);
+        $request->validate(
+            [
+                'username' => ['required', 'string', 'max:255', 'unique:users'],
+                'fullname' => ['required', 'string', 'max:255'],
+                'email' => ['email'],
+                'password' => ['required', 'confirmed', Password::defaults()],
+                'address' => ['required', 'string'],
+                'birthDate' => ['required', 'date', 'before:today'],
+                'phoneNumber' => ['required']
+            ],
+            [
+                'username.required' => 'Username harus diisi',
+                'username.unique' => 'Username telah digunakan',
+                'birthDate.before' => 'Tanggal lahir harus sebelum hari ini'
+            ]
+        );
 
         $user = User::create([
             'username' => $request->username,
-            'fullName' => $request->fullName,
+            'fullname' => $request->fullname,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'address' => $request->address,
-            'birthdate' => $request->birthdate,
+            'birthdate' => $request->birthDate,
             'phoneNumber' => $request->phoneNumber,
-            'agama' => $request->agama,
-            'jenisKelamin' => $request->jenisKelamin,
         ]);
 
-        
-
-        //Auth::login($user);
-
-        return redirect()->route("user.daftarPengguna");
+        return view('user.daftarPengguna');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(User $user)
     {
-        return view("user.infoPengguna", compact('user'));
+        return view('user.infoPengguna', compact('user'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $user)
+    public function getAllUsers()
     {
-        return view("user.editPengguna", compact("user"));
+        $users = DB::table('users')
+            ->select(
+                'id as id',
+                'fullname as fullname',
+                'address as address',
+                'birthdate as birthdate',
+                'phoneNumber as phoneNumber'
+            )
+            ->orderBy('id', 'asc')
+            ->get();
+
+        return DataTables::of($users)
+            ->addColumn('action', function ($user) {
+                $html = '
+                <a class="btn btn-info" href="/userView/' . $user->id . '">Edit</a>
+                ';
+                return $html;
+            })
+            ->make(true);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
+
+
+
     public function update(Request $request)
     {
-       try{
+
         $request->validate([
-            'username' => ['required', 'string', 'max:100'],
-            'fullName' => ['required', 'string', 'max:100'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $request->id],
-            'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
-            'address' => ['required', 'string', 'max:1000'],
-            'birthdate' => ['required', 'date'],
-            'phoneNumber' => ['required', 'string', 'max:20'],
-            'agama' => ['required', 'string', 'max:20'],
-            'jenisKelamin' => ['required', 'numeric', 'in:0,1'],
+            'fullname' => ['required', 'string', 'max:255'],
+            'password' => ['required'],
+            'address' => ['required', 'string'],
+            'phoneNumber' => ['required'],
         ]);
 
-        $user = User::findOrFail($request->id)->update([
-            'username' => $request->username,
-            'fullName' => $request->fullName,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'address' => $request->address,
-            'birthdate' => $request->birthdate,
-            'phoneNumber' => $request->phoneNumber,
-            'agama' => $request->agama,
-            'jenisKelamin' => $request->jenisKelamin,
-        ]);
+        $affected = DB::table('users')
+            ->where('id', $request->id)
+            ->update([
+                'fullname' => $request->fullname,
+                'password' => Hash::make($request->password),
+                'address' => $request->address,
+                'phoneNumber' => $request->phoneNumber,
+            ]);
 
-        return redirect()->route("user.daftarPengguna");
-       } catch(\Exception $e){
-        dd($e);
-       }
-
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return view('user.daftarPengguna');
     }
 }

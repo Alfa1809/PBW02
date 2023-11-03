@@ -1,37 +1,62 @@
-{{-- AHMAD FAZA AL FARISI (6706220050) --}}
+<x-app-layout>
+  <x-slot name="header">
+      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+          {{ __('Tambah Koleksi') }}
+      </h2>
+  </x-slot>
 
-@extends('layouts.app')
+  <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+          <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+              <div class="p-6 bg-white border-b border-gray-200">
+                <form method="POST" action="/koleksiStore">
+                    @csrf
+        
+                    <!-- Judul -->
+                    <div>
+                        <x-input-label for="nama" :value="__('Judul')" />
+        
+                        <x-text-input id="nama" class="block mt-1 w-full" type="text" name="nama" :value="old('nama')" required autofocus />
+        
+                        <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                    </div>
 
-@section('content')
-<form class="max-w-4xl mx-auto" action="{{ route('koleksi.storeKoleksi') }}"method="POST">
-    @csrf
-    <div class="relative z-0 w-full mb-6 group">
-        <input type="text" name="namaKoleksi" id="namaKoleksi" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-        <label for="namaKoleksi" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nama Koleksi</label>
-    </div>
-    <div class="mt-4">
-        <x-input-label for="jenisKoleksi" :value="__('Jenis Koleksi')" />
-        <div>
-            <label for="0" class="text-grey">Buku</label>
-        <input id="jenisKoleksi" type="radio" name="jenisKoleksi" required value="1" />
-        </div>
-        <div>
-            <label for="1" class="text-grey">Majalah</label>
-        <input id="jenisKoleksi" type="radio" name="jenisKoleksi" required value="2" />
-        </div>
-        <div>
-            <label for="1" class="text-grey">Cakram Digital</label>
-        <input id="jenisKoleksi" type="radio" name="jenisKoleksi" required value="3" />
-        </div>
-        <x-input-error :messages="$errors->get('jenisKoleksi')" class="mt-2" />
-    </div>
-    <div class="relative z-0 w-full mb-6 group">
-        <input type="number" name="jumlahKoleksi" id="jumlahKoleksi" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
-        <label for="jumlahKoleksi" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Jumlah Koleksi</label>
-        <x-input-error :messages="$errors->get('jumlahKoleksi')" class="mt-2" />
-    </div>
-    
+                    <!-- Jenis -->
+                    <div>
+                        <x-input-label for="jenis" :value="__('Jenis')" />
+        
+                        <select id="jenis" name="jenis" class="form-select" required>
+                              <option>Pilih salah satu</option>
+                              <option value="1">Buku</option>
+                              <option value="2">Majalah</option>
+                              <option value="3">Cakram Digital</option>
+                          </select>
+        
+                        <x-input-error :messages="$errors->get('jenis')" class="mt-2" />
+                    </div>
 
-    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
-  </form>
-@endsection
+                    <!-- Jumlah -->
+                    <div>
+                        <x-input-label for="jumlahAwal" :value="__('Jumlah')" />
+        
+                        <x-text-input id="jumlahAwal" class="block mt-1 w-full" type="number" name="jumlahAwal" :value="old('jumlahAwal')" min="1" required />
+        
+                        <x-input-error :messages="$errors->get('jumlahAwal')" class="mt-2" />
+                    </div>
+        
+                    <div class="flex items-center justify-end mt-4">
+                        <x-primary-button type="reset" class="ml-4">
+                            {{ __('Reset') }}
+                        </x-primary-button>
+
+                        <x-primary-button class="ml-4">
+                            {{ __('Tambah Koleksi') }}
+                        </x-primary-button>
+                    </div>
+                </form>
+        
+              </div>
+          </div>
+        </div>
+  </div>
+</x-app-layout>

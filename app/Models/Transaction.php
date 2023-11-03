@@ -7,16 +7,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Collection extends Model
+class Transaction extends Model
 {
     use HasFactory;
     protected $fillable = [
         'id',
-        'nama',
-        'jenis',
-        'created_at',
-        'jumlahAwal',
-        'jumlahSisa',
-        'jumlahKeluar',
+        'userIdPetugas',
+        'userIdPeminjam',
+        'tanggalPinjam',
+        'tanggalSelesai',
     ];
 }
